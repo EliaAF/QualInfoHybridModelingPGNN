@@ -67,7 +67,7 @@ from PGNN_prototype import PGNN_objective, PGNN_objective_gradient
 plt.rcParams['figure.dpi'] = 330
 
 # Line thickness
-lw = 1.5
+lw = 1
 # Marker size
 ms = 2
 # Marker edge line width
@@ -133,6 +133,9 @@ opts_mark = {
 opts_line = {
     'linewidth' : lw
 }
+# Dictionary of alterantive options for lines
+opts_line_a = opts_line.copy()
+opts_line_a['linewidth'] = 2*lw
 
 # Number of rows and number of columns in plots
 nc = 1
@@ -222,14 +225,14 @@ N, V = X.shape
 # Data plots
 vtp = ['c_A_F', 'c_C_F', 'T_F', 'F', 'a', 'Y_C_A', 'T', 'F_j']
 var_labs = [
-    '$\mathrm{c_A^{in}\ (kmol\, m^{-3})}$',
-    '$\mathrm{c_R^{in}\ (kmol\, m^{-3})}$',
+    '$\mathrm{c_A^{in}\ (kmol / m^{3})}$',
+    '$\mathrm{c_R^{in}\ (kmol / m^{3})}$',
     '$\mathrm{T^{in}\ (K)}$',
-    '$\mathrm{F\ (m^3\, s^{-1})}$',
+    '$\mathrm{F\ (m^{3} / s)}$',
     '$\mathrm{a}$',
     '$\mathrm{Y_{R/A}}$',
     '$\mathrm{T\ (K)}$',
-    '$\mathrm{F_j\ (m^3\, s^{-1})}$'
+    '$\mathrm{F_j\ (m^{3} / s)}$'
 ]
 ylims = [
     [5.35, 5.45],
@@ -599,7 +602,7 @@ for k, i in enumerate([0, 2]):
     else:
         j = k
     ax[j].plot(pred.loc[idx, 'Time'], pred.loc[idx, 'a'], 'o', label = 'Data', markerfacecolor = colours[0], **opts_mark)
-    ax[j].plot(pred.loc[idx, 'Time'], pred.loc[idx, 'a_ANN'], '--', label = 'ANN', color = colours[3], **opts_line)
+    ax[j].plot(pred.loc[idx, 'Time'], pred.loc[idx, 'a_ANN'], '-', label = 'ANN', color = colours[3], **opts_line_a)
     ax[j].text(0.03, 0.06, titles[i], transform = ax[j].transAxes, horizontalalignment = 'left', verticalalignment = 'bottom', **opts_text)
     ax[j].minorticks_on()
     ax[j].tick_params(axis = 'both', which = 'both', **opts_ticks)
@@ -679,7 +682,7 @@ for i in range(NB):
     else:
         j = i
     ax[j].plot(pred.loc[idx, 'Time'], pred.loc[idx, 'a'], 'o', label = 'Data', markerfacecolor = colours[0], **opts_mark)
-    ax[j].plot(pred.loc[idx, 'Time'], pred.loc[idx, 'a_ANN'], '--', label = 'ANN', color = colours[3], **opts_line)
+    ax[j].plot(pred.loc[idx, 'Time'], pred.loc[idx, 'a_ANN'], '-', label = 'ANN', color = colours[3], **opts_line_a)
     ax[j].plot(pred.loc[idx, 'Time'], pred.loc[idx, 'PGNN_a'], '-', label = 'PGNN_a', color = colours[4], **opts_line)
     ax[j].text(0.03, 0.06, titles[i], transform = ax[j].transAxes, horizontalalignment = 'left', verticalalignment = 'bottom', **opts_text)
     ax[j].minorticks_on()
@@ -760,7 +763,7 @@ for i in range(NB):
     else:
         j = i
     ax[j].plot(pred.loc[idx, 'Time'], pred.loc[idx, 'a'], 'o', label = 'Data', markerfacecolor = colours[0], **opts_mark)
-    ax[j].plot(pred.loc[idx, 'Time'], pred.loc[idx, 'a_ANN'], '--', label = 'ANN', color = colours[3], **opts_line)
+    ax[j].plot(pred.loc[idx, 'Time'], pred.loc[idx, 'a_ANN'], '-', label = 'ANN', color = colours[3], **opts_line_a)
     ax[j].plot(pred.loc[idx, 'Time'], pred.loc[idx, 'PGNN_b'], '-', label = 'PGNN_b', color = colours[4], **opts_line)
     ax[j].text(0.03, 0.06, titles[i], transform = ax[j].transAxes, horizontalalignment = 'left', verticalalignment = 'bottom', **opts_text)
     ax[j].minorticks_on()
@@ -842,7 +845,7 @@ for i in range(NB):
     else:
         j = i
     ax[j].plot(pred.loc[idx, 'Time'], pred.loc[idx, 'a'], 'o', label = 'Data', markerfacecolor = colours[0], **opts_mark)
-    ax[j].plot(pred.loc[idx, 'Time'], pred.loc[idx, 'a_ANN'], '--', label = 'ANN', color = colours[3], **opts_line)
+    ax[j].plot(pred.loc[idx, 'Time'], pred.loc[idx, 'a_ANN'], '-', label = 'ANN', color = colours[3], **opts_line_a)
     ax[j].plot(pred.loc[idx, 'Time'], pred.loc[idx, 'PGNN_c'], '-', label = 'PGNN_c', color = colours[4], **opts_line)
     ax[j].text(0.03, 0.06, titles[i], transform = ax[j].transAxes, horizontalalignment = 'left', verticalalignment = 'bottom', **opts_text)
     ax[j].minorticks_on()
@@ -922,7 +925,7 @@ for i in range(NB):
     else:
         j = i
     ax[j].plot(pred.loc[idx, 'Time'], pred.loc[idx, 'a'], 'o', label = 'Data', markerfacecolor = colours[0], **opts_mark)
-    ax[j].plot(pred.loc[idx, 'Time'], pred.loc[idx, 'a_ANN'], '--', label = 'ANN', color = colours[3], **opts_line)
+    ax[j].plot(pred.loc[idx, 'Time'], pred.loc[idx, 'a_ANN'], '-', label = 'ANN', color = colours[3], **opts_line_a)
     ax[j].plot(pred.loc[idx, 'Time'], pred.loc[idx, 'PGNN_d'], '-', label = 'PGNN_d', color = colours[4], **opts_line)
     ax[j].text(0.03, 0.06, titles[i], transform = ax[j].transAxes, horizontalalignment = 'left', verticalalignment = 'bottom', **opts_text)
     ax[j].minorticks_on()
@@ -1002,7 +1005,7 @@ for i in range(NB):
     else:
         j = i
     ax[j].plot(pred.loc[idx, 'Time'], pred.loc[idx, 'a'], 'o', label = 'Data', markerfacecolor = colours[0], **opts_mark)
-    ax[j].plot(pred.loc[idx, 'Time'], pred.loc[idx, 'a_ANN'], '--', label = 'ANN', color = colours[3], **opts_line)
+    ax[j].plot(pred.loc[idx, 'Time'], pred.loc[idx, 'a_ANN'], '-', label = 'ANN', color = colours[3], **opts_line_a)
     ax[j].plot(pred.loc[idx, 'Time'], pred.loc[idx, 'PGNN_e'], '-', label = 'PGNN_e', color = colours[4], **opts_line)
     ax[j].text(0.03, 0.06, titles[i], transform = ax[j].transAxes, horizontalalignment = 'left', verticalalignment = 'bottom', **opts_text)
     ax[j].minorticks_on()
@@ -1083,7 +1086,7 @@ for i in range(NB):
     else:
         j = i
     ax[j].plot(pred.loc[idx, 'Time'], pred.loc[idx, 'a'], 'o', label = 'Data', markerfacecolor = colours[0], **opts_mark)
-    ax[j].plot(pred.loc[idx, 'Time'], pred.loc[idx, 'a_ANN'], '--', label = 'ANN', color = colours[3], **opts_line)
+    ax[j].plot(pred.loc[idx, 'Time'], pred.loc[idx, 'a_ANN'], '-', label = 'ANN', color = colours[3], **opts_line_a)
     ax[j].plot(pred.loc[idx, 'Time'], pred.loc[idx, 'PGNN_f'], '-', label = 'PGNN_f', color = colours[4], **opts_line)
     ax[j].text(0.03, 0.06, titles[i], transform = ax[j].transAxes, horizontalalignment = 'left', verticalalignment = 'bottom', **opts_text)
     ax[j].minorticks_on()

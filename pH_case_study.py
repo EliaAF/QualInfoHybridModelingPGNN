@@ -67,7 +67,7 @@ from PGNN_prototype import PGNN_objective, PGNN_objective_gradient
 plt.rcParams['figure.dpi'] = 330
 
 # Line thickness
-lw = 1.5
+lw = 1
 # Marker size
 ms = 2
 # Marker edge line width
@@ -133,6 +133,9 @@ opts_mark = {
 opts_line = {
     'linewidth' : lw
 }
+# Dictionary of alterantive options for lines
+opts_line_a = opts_line.copy()
+opts_line_a['linewidth'] = 2*lw
 
 # Special options for markers
 opts_mark_sp = {
@@ -169,8 +172,8 @@ X_vals = np.linspace(-0.1, 0.06, 2001, endpoint = True).reshape(-1, 1)
 ylabels = [
     '$\mathrm{Y\ (mol)}$',
     '$\mathrm{pH}$',
-    '$\mathrm{u\ (L\, {min}^{-1})}$',
-    '$\mathrm{F\ (L\, {min}^{-1})}$'
+    '$\mathrm{u\ (L / min)}$',
+    '$\mathrm{F\ (L / min)}$'
 ]
 ylims = np.array([
     (-0.1, 0.025),
@@ -323,7 +326,7 @@ y_pred_ANN_vals = preprocessor_y.inverse_transform(
 fig, ax = plt.subplots(nrows = 1, ncols = 1, figsize = small_fs)
 ax.plot(X, y, 'o', label = 'Data', markerfacecolor = colours[0], **opts_mark)
 # ax.plot(X_c, np.full(X_c.shape, 0), '|', label = 'Collocation points', markeredgecolor = colours[-1])
-ax.plot(X_vals, y_pred_ANN_vals, '--', label = 'ANN', color = colours[3], **opts_line)
+ax.plot(X_vals, y_pred_ANN_vals, '-', label = 'ANN', color = colours[3], **opts_line_a)
 ax.set_xlim(*xlims)
 ax.set_ylim(*ylims)
 ax.set_xlabel('$\mathrm{Y\ (mol)}$', **opts_labs)
@@ -384,7 +387,7 @@ y_pred_PGNN_vals = preprocessor_y.inverse_transform(
 fig, ax = plt.subplots(nrows = 1, ncols = 1, figsize = small_fs)
 ax.plot(X, y, 'o', label = 'Data', markerfacecolor = colours[0], **opts_mark)
 ax.plot(X_c, np.full(X_c.shape, 0), '|', label = 'Collocation points', markeredgecolor = colours[-1])
-ax.plot(X_vals, y_pred_ANN_vals, '--', label = 'ANN', color = colours[3], **opts_line)
+ax.plot(X_vals, y_pred_ANN_vals, '-', label = 'ANN', color = colours[3], **opts_line_a)
 ax.plot(X_vals, y_pred_PGNN_vals, '-', label = 'PGNN_a', color = colours[4], **opts_line)
 ax.set_xlim(*xlims)
 ax.set_ylim(*ylims)
@@ -446,7 +449,7 @@ y_pred_PGNN_vals = preprocessor_y.inverse_transform(
 fig, ax = plt.subplots(nrows = 1, ncols = 1, figsize = small_fs)
 ax.plot(X, y, 'o', label = 'Data', markerfacecolor = colours[0], **opts_mark)
 ax.plot(X_c, np.full(X_c.shape, 0), '|', label = 'Collocation points', markeredgecolor = colours[-1])
-ax.plot(X_vals, y_pred_ANN_vals, '--', label = 'ANN', color = colours[3], **opts_line)
+ax.plot(X_vals, y_pred_ANN_vals, '-', label = 'ANN', color = colours[3], **opts_line_a)
 ax.plot(X_vals, y_pred_PGNN_vals, '-', label = 'PGNN_b', color = colours[4], **opts_line)
 ax.set_xlim(*xlims)
 ax.set_ylim(*ylims)
@@ -508,7 +511,7 @@ y_pred_PGNN_vals = preprocessor_y.inverse_transform(
 fig, ax = plt.subplots(nrows = 1, ncols = 1, figsize = small_fs)
 ax.plot(X, y, 'o', label = 'Data', markerfacecolor = colours[0], **opts_mark)
 ax.plot(X_c, np.full(X_c.shape, 0), '|', label = 'Collocation points', markeredgecolor = colours[-1])
-ax.plot(X_vals, y_pred_ANN_vals, '--', label = 'ANN', color = colours[3], **opts_line)
+ax.plot(X_vals, y_pred_ANN_vals, '-', label = 'ANN', color = colours[3], **opts_line_a)
 ax.plot(X_vals, y_pred_PGNN_vals, '-', label = 'PGNN_c', color = colours[4], **opts_line)
 ax.set_xlim(*xlims)
 ax.set_ylim(*ylims)
@@ -570,7 +573,7 @@ y_pred_PGNN_vals = preprocessor_y.inverse_transform(
 fig, ax = plt.subplots(nrows = 1, ncols = 1, figsize = small_fs)
 ax.plot(X, y, 'o', label = 'Data', markerfacecolor = colours[0], **opts_mark)
 ax.plot(X_c, np.full(X_c.shape, 0), '|', label = 'Collocation points', markeredgecolor = colours[-1])
-ax.plot(X_vals, y_pred_ANN_vals, '--', label = 'ANN', color = colours[3], **opts_line)
+ax.plot(X_vals, y_pred_ANN_vals, '-', label = 'ANN', color = colours[3], **opts_line_a)
 ax.plot(X_vals, y_pred_PGNN_vals, '-', label = 'PGNN_d', color = colours[4], **opts_line)
 ax.set_xlim(*xlims)
 ax.set_ylim(*ylims)
