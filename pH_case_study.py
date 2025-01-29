@@ -1,5 +1,3 @@
-#!/usr/bin/env python3
-# -*- coding: utf-8 -*-
 """
 pH_case_study.py
 Version: 1.0.0
@@ -9,7 +7,7 @@ Author: Elia Arnese-Feffin elia249@mit.edu
 # GNU General Public License version 3 (GPL-3.0) ------------------------------
 
 pH_case_study.py
-Copyright (C) 2024– Elia Arnese-Feffin
+Copyright (C) 2024-2025 Elia Arnese-Feffin
 
 This program is free software: you can redistribute it and/or modify it under
 the terms of the GNU General Public License as published by the Free Software
@@ -27,9 +25,9 @@ this program. If not, see https://www.gnu.org/licenses/gpl-3.0.html.
 
 To attribute credit to the author of the software, please refer to the
 companion Journal Paper:
-    E. Arnese-Feffin, <OTHER_AUTHORS> and R. D. Braatz (2025):
+    E. Arnese-Feffin, N. Sagar, L. A. Briceno-Mena, B. Braun, I. Castillo\ap{3}, L. Bui, J. Xu, L. H. Chiang, and R. D. Braatz (2025):
         <TITLE>.
-        <JOURNAL>, 00, 000–000.
+        <JOURNAL>, 00, 000-000.
         DOI: <DOI>.
 
 """
