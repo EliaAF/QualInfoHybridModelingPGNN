@@ -25,9 +25,9 @@ this program. If not, see https://www.gnu.org/licenses/gpl-3.0.html.
 
 To attribute credit to the author of the software, please refer to the
 companion Journal Paper:
-    E. Arnese-Feffin, N. Sagar, L. A. Briceno-Mena, B. Braun, I. Castillo\ap{3}, L. Bui, J. Xu, L. H. Chiang, and R. D. Braatz (2025):
-        <TITLE>.
-        <JOURNAL>, 00, 000-000.
+    E. Arnese-Feffin, N. Sagar, L.A. Briceno-Mena, B. Braun, I. Castillo, C. Rizzo, L. Bui, J. Xu, L.H. Chiang, and R.D. Braatz (2025):
+        The Incorporation of Qualitative Knowledge in Hybrid Modeling.
+        Computers and Chemical Engineering, 00, 000000.
         DOI: <DOI>.
 
 """
@@ -72,9 +72,9 @@ ms = 2
 melw = ms*0.1
 # Marker edge line colour
 melc = [0.9, 0.9, 0.9]
-# List of colours
-colours = list(mcolors.TABLEAU_COLORS.values())
-colours = [
+# List of colors
+colors = list(mcolors.TABLEAU_COLORS.values())
+colors = [
     [0.5000, 0.5000, 0.5000],
     [0.1216, 0.4667, 0.7059],
     [1.0000, 0.4980, 0.0549],
@@ -184,7 +184,7 @@ col_idx = [1, 1, 2, 4]
 # Process variables
 fig, ax = plt.subplots(nrows = 4, ncols = 1, sharex = True, figsize = large_fs)
 for i in range(4):
-    ax[i].plot(tab.iloc[:, 0], tab.iloc[:, i + 1], '.', markerfacecolor = colours[col_idx[i]], **opts_mark_sp)
+    ax[i].plot(tab.iloc[:, 0], tab.iloc[:, i + 1], '.', markerfacecolor = colors[col_idx[i]], **opts_mark_sp)
     ax[i].set_ylabel(ylabels[i], **opts_labs)
     ax[i].tick_params(axis = 'both', **opts_ticks)
     ax[i].set_ylim(*ylims[i])
@@ -198,7 +198,7 @@ plt.tight_layout()
 xlims = (-0.1, 0.06)
 ylims = (0, 14)
 fig, ax = plt.subplots(nrows = 1, ncols = 1, figsize = small_fs)
-ax.plot(X, y, 'o', label = 'Data', markerfacecolor = colours[0], **opts_mark)
+ax.plot(X, y, 'o', label = 'Data', markerfacecolor = colors[0], **opts_mark)
 ax.set_xlim(*xlims)
 ax.set_ylim(*ylims)
 ax.set_xlabel('$\mathrm{Y\ (mol)}$', **opts_labs)
@@ -237,10 +237,10 @@ Ns = [N_i, N_h, N_o]
 # Total number of parameters
 Np = np.dot((1 + np.array(Ns[0:-1])), np.array(Ns[1:]))
 
-# Random numebr generator
+# Random number generator
 rseed = np.random.RandomState(seed = 20240731)
 rng = np.random.default_rng(20240731)
-# Intialize parameters
+# Initialize parameters
 p_0 = rng.standard_normal(Np)
 
 # Optimization options
@@ -273,7 +273,7 @@ y_ub = preprocessor_y.transform(np.array([[13]]))
 # Numerical derivative operator
 diff_fun = fd.FinDiff(1, (X_cs[1] - X_cs[0])[0], 1, acc = 2)
 
-# First prinicple model
+# First principle model
 def fpm_pH(Y, K_w = 1e-14):
     '''
     First principles model of the pH vs. Y relationship
@@ -295,7 +295,7 @@ OPT = minimize(
     options = opt
 )
 
-# Recover the parameteters
+# Recover the parameters
 p = OPT.x
 # Reconstruct parameter matrices
 W, b = ANN_params_to_matrices(p, L, Ns)
@@ -322,9 +322,9 @@ y_pred_ANN_vals = preprocessor_y.inverse_transform(
 
 # Plot model fit
 fig, ax = plt.subplots(nrows = 1, ncols = 1, figsize = small_fs)
-ax.plot(X, y, 'o', label = 'Data', markerfacecolor = colours[0], **opts_mark)
-# ax.plot(X_c, np.full(X_c.shape, 0), '|', label = 'Collocation points', markeredgecolor = colours[-1])
-ax.plot(X_vals, y_pred_ANN_vals, '-', label = 'ANN', color = colours[3], **opts_line_a)
+ax.plot(X, y, 'o', label = 'Data', markerfacecolor = colors[0], **opts_mark)
+# ax.plot(X_c, np.full(X_c.shape, 0), '|', label = 'Collocation points', markeredgecolor = colors[-1])
+ax.plot(X_vals, y_pred_ANN_vals, '-', label = 'ANN', color = colors[3], **opts_line_a)
 ax.set_xlim(*xlims)
 ax.set_ylim(*ylims)
 ax.set_xlabel('$\mathrm{Y\ (mol)}$', **opts_labs)
@@ -338,12 +338,12 @@ plt.tight_layout()
 
 #%% PGNN with upper bound constraints
 
-# Weights of the mechanistic consitraint
+# Weights of the mechanistic constraint
 alpha = np.array([
     0.0,   # Lower bound
     0.1,   # Upper bound
     0.0,   # Monotonicity
-    0.0    # Mechanistic model equaility
+    0.0    # Mechanistic model equality
 ])
 
 # Solve optimization problem with gradients
@@ -356,7 +356,7 @@ OPT_PGNN = minimize(
     options = opt
 )
 
-# Recover the parameteters
+# Recover the parameters
 p_PGNN = OPT_PGNN.x
 # Reconstruct parameter matrices
 W_PGNN, b_PGNN = ANN_params_to_matrices(p_PGNN, L, Ns)
@@ -383,10 +383,10 @@ y_pred_PGNN_vals = preprocessor_y.inverse_transform(
 
 # Plot model fit
 fig, ax = plt.subplots(nrows = 1, ncols = 1, figsize = small_fs)
-ax.plot(X, y, 'o', label = 'Data', markerfacecolor = colours[0], **opts_mark)
-ax.plot(X_c, np.full(X_c.shape, 0), '|', label = 'Collocation points', markeredgecolor = colours[-1])
-ax.plot(X_vals, y_pred_ANN_vals, '-', label = 'ANN', color = colours[3], **opts_line_a)
-ax.plot(X_vals, y_pred_PGNN_vals, '-', label = 'PGNN_a', color = colours[4], **opts_line)
+ax.plot(X, y, 'o', label = 'Data', markerfacecolor = colors[0], **opts_mark)
+ax.plot(X_c, np.full(X_c.shape, 0), '|', label = 'Collocation points', markeredgecolor = colors[-1])
+ax.plot(X_vals, y_pred_ANN_vals, '-', label = 'ANN', color = colors[3], **opts_line_a)
+ax.plot(X_vals, y_pred_PGNN_vals, '-', label = 'PGNN_a', color = colors[4], **opts_line)
 ax.set_xlim(*xlims)
 ax.set_ylim(*ylims)
 ax.set_xlabel('$\mathrm{Y\ (mol)}$', **opts_labs)
@@ -400,12 +400,12 @@ plt.tight_layout()
 
 #%% PGNN with upper bound and monotonicity constraints
 
-# Weights of the mechanistic consitraint
+# Weights of the mechanistic constraint
 alpha = np.array([
     0.0,   # Lower bound
     0.1,   # Upper bound
     0.1,   # Monotonicity
-    0.0    # Mechanistic model equaility
+    0.0    # Mechanistic model equality
 ])
 
 # Solve optimization problem with gradients
@@ -418,7 +418,7 @@ OPT_PGNN = minimize(
     options = opt
 )
 
-# Recover the parameteters
+# Recover the parameters
 p_PGNN = OPT_PGNN.x
 # Reconstruct parameter matrices
 W_PGNN, b_PGNN = ANN_params_to_matrices(p_PGNN, L, Ns)
@@ -445,10 +445,10 @@ y_pred_PGNN_vals = preprocessor_y.inverse_transform(
 
 # Plot model fit
 fig, ax = plt.subplots(nrows = 1, ncols = 1, figsize = small_fs)
-ax.plot(X, y, 'o', label = 'Data', markerfacecolor = colours[0], **opts_mark)
-ax.plot(X_c, np.full(X_c.shape, 0), '|', label = 'Collocation points', markeredgecolor = colours[-1])
-ax.plot(X_vals, y_pred_ANN_vals, '-', label = 'ANN', color = colours[3], **opts_line_a)
-ax.plot(X_vals, y_pred_PGNN_vals, '-', label = 'PGNN_b', color = colours[4], **opts_line)
+ax.plot(X, y, 'o', label = 'Data', markerfacecolor = colors[0], **opts_mark)
+ax.plot(X_c, np.full(X_c.shape, 0), '|', label = 'Collocation points', markeredgecolor = colors[-1])
+ax.plot(X_vals, y_pred_ANN_vals, '-', label = 'ANN', color = colors[3], **opts_line_a)
+ax.plot(X_vals, y_pred_PGNN_vals, '-', label = 'PGNN_b', color = colors[4], **opts_line)
 ax.set_xlim(*xlims)
 ax.set_ylim(*ylims)
 ax.set_xlabel('$\mathrm{Y\ (mol)}$', **opts_labs)
@@ -462,12 +462,12 @@ plt.tight_layout()
 
 #%% PGNN with both bounds and monotonicity constraints
 
-# Weights of the mechanistic consitraint
+# Weights of the mechanistic constraint
 alpha = np.array([
     0.1,   # Lower bound
     0.1,   # Upper bound
     0.1,   # Monotonicity
-    0.0    # Mechanistic model equaility
+    0.0    # Mechanistic model equality
 ])
 
 # Solve optimization problem with gradients
@@ -480,7 +480,7 @@ OPT_PGNN = minimize(
     options = opt
 )
 
-# Recover the parameteters
+# Recover the parameters
 p_PGNN = OPT_PGNN.x
 # Reconstruct parameter matrices
 W_PGNN, b_PGNN = ANN_params_to_matrices(p_PGNN, L, Ns)
@@ -507,10 +507,10 @@ y_pred_PGNN_vals = preprocessor_y.inverse_transform(
 
 # Plot model fit
 fig, ax = plt.subplots(nrows = 1, ncols = 1, figsize = small_fs)
-ax.plot(X, y, 'o', label = 'Data', markerfacecolor = colours[0], **opts_mark)
-ax.plot(X_c, np.full(X_c.shape, 0), '|', label = 'Collocation points', markeredgecolor = colours[-1])
-ax.plot(X_vals, y_pred_ANN_vals, '-', label = 'ANN', color = colours[3], **opts_line_a)
-ax.plot(X_vals, y_pred_PGNN_vals, '-', label = 'PGNN_c', color = colours[4], **opts_line)
+ax.plot(X, y, 'o', label = 'Data', markerfacecolor = colors[0], **opts_mark)
+ax.plot(X_c, np.full(X_c.shape, 0), '|', label = 'Collocation points', markeredgecolor = colors[-1])
+ax.plot(X_vals, y_pred_ANN_vals, '-', label = 'ANN', color = colors[3], **opts_line_a)
+ax.plot(X_vals, y_pred_PGNN_vals, '-', label = 'PGNN_c', color = colors[4], **opts_line)
 ax.set_xlim(*xlims)
 ax.set_ylim(*ylims)
 ax.set_xlabel('$\mathrm{Y\ (mol)}$', **opts_labs)
@@ -524,12 +524,12 @@ plt.tight_layout()
 
 #%% PGNN with reference model constraint
 
-# Weights of the mechanistic consitraint
+# Weights of the mechanistic constraint
 alpha = np.array([
     2.5,   # Lower bound
     0.1,   # Upper bound
     0.2,   # Monotonicity
-    0.2    # Mechanistic model equaility
+    0.2    # Mechanistic model equality
 ])
 
 # Solve optimization problem with gradients
@@ -542,7 +542,7 @@ OPT_PGNN = minimize(
     options = opt
 )
 
-# Recover the parameteters
+# Recover the parameters
 p_PGNN = OPT_PGNN.x
 # Reconstruct parameter matrices
 W_PGNN, b_PGNN = ANN_params_to_matrices(p_PGNN, L, Ns)
@@ -569,10 +569,10 @@ y_pred_PGNN_vals = preprocessor_y.inverse_transform(
 
 # Plot model fit
 fig, ax = plt.subplots(nrows = 1, ncols = 1, figsize = small_fs)
-ax.plot(X, y, 'o', label = 'Data', markerfacecolor = colours[0], **opts_mark)
-ax.plot(X_c, np.full(X_c.shape, 0), '|', label = 'Collocation points', markeredgecolor = colours[-1])
-ax.plot(X_vals, y_pred_ANN_vals, '-', label = 'ANN', color = colours[3], **opts_line_a)
-ax.plot(X_vals, y_pred_PGNN_vals, '-', label = 'PGNN_d', color = colours[4], **opts_line)
+ax.plot(X, y, 'o', label = 'Data', markerfacecolor = colors[0], **opts_mark)
+ax.plot(X_c, np.full(X_c.shape, 0), '|', label = 'Collocation points', markeredgecolor = colors[-1])
+ax.plot(X_vals, y_pred_ANN_vals, '-', label = 'ANN', color = colors[3], **opts_line_a)
+ax.plot(X_vals, y_pred_PGNN_vals, '-', label = 'PGNN_d', color = colors[4], **opts_line)
 ax.set_xlim(*xlims)
 ax.set_ylim(*ylims)
 ax.set_xlabel('$\mathrm{Y\ (mol)}$', **opts_labs)

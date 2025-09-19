@@ -1,7 +1,7 @@
 """
 CA_case_study.py
-Version: 1.0.0
-Date: 2024/12/19
+Version: 1.0.1
+Date: 2025/09/17
 Author: Elia Arnese-Feffin elia249@mit.edu
 
 # GNU General Public License version 3 (GPL-3.0) ------------------------------
@@ -25,9 +25,9 @@ this program. If not, see https://www.gnu.org/licenses/gpl-3.0.html.
 
 To attribute credit to the author of the software, please refer to the
 companion Journal Paper:
-    E. Arnese-Feffin, N. Sagar, L. A. Briceno-Mena, B. Braun, I. Castillo\ap{3}, L. Bui, J. Xu, L. H. Chiang, and R. D. Braatz (2025):
-        <TITLE>.
-        <JOURNAL>, 00, 000-000.
+    E. Arnese-Feffin, N. Sagar, L.A. Briceno-Mena, B. Braun, I. Castillo, C. Rizzo, L. Bui, J. Xu, L.H. Chiang, and R.D. Braatz (2025):
+        The Incorporation of Qualitative Knowledge in Hybrid Modeling.
+        Computers and Chemical Engineering, 00, 000000.
         DOI: <DOI>.
 
 """
@@ -72,9 +72,9 @@ ms = 2
 melw = ms*0.1
 # Marker edge line colour
 melc = [0.9, 0.9, 0.9]
-# List of colours
-colours = list(mcolors.TABLEAU_COLORS.values())
-colours = [
+# List of colors
+colors = list(mcolors.TABLEAU_COLORS.values())
+colors = [
     [0.5000, 0.5000, 0.5000],
     [0.1216, 0.4667, 0.7059],
     [1.0000, 0.4980, 0.0549],
@@ -131,7 +131,7 @@ opts_mark = {
 opts_line = {
     'linewidth' : lw
 }
-# Dictionary of alterantive options for lines
+# Dictionary of alternative options for lines
 opts_line_a = opts_line.copy()
 opts_line_a['linewidth'] = 2*lw
 
@@ -173,7 +173,7 @@ vts = ['c_A', 'c_B', 'c_C', 'c_D', 'T', 'T_j', 'a', 'X_A', 'X_B', 'Y_C_A', 'Y_D_
 for i in range(7):
     # Find batch
     idx = tab['batch_number'] == i + 1
-    # Shift states and outputs bacward by one sampling time
+    # Shift states and outputs backward by one sampling time
     tab.loc[idx, vts] = tab.loc[idx, vts].shift(periods = -1)
 
 # Drop some batches
@@ -216,6 +216,9 @@ y = tab.loc[idx, output_vars].to_numpy()
 idx = tab['testing'] == 1
 X_test = tab.loc[idx, input_vars].to_numpy()
 y_test = tab.loc[idx, output_vars].to_numpy()
+# Index for extrapolation
+extr_idx = y_test < np.min(y)
+extr_idx = extr_idx.flatten()
 
 # Numbers of observations and variables
 N, V = X.shape
@@ -251,7 +254,7 @@ idx = (tab['batch_number'] == btp)
 fig, ax = plt.subplots(nrows = 4, ncols = 2, figsize = large_fs, sharex = True)
 for i in range(8):
     j = np.unravel_index(i, (4, 2), order = 'F')
-    ax[j].plot(tab.loc[idx, 'Time'], tab.loc[idx, vtp[i]], 'o', label = 'Data', markerfacecolor = colours[cv[i]], **opts_mark_sp)
+    ax[j].plot(tab.loc[idx, 'Time'], tab.loc[idx, vtp[i]], 'o', label = 'Data', markerfacecolor = colors[cv[i]], **opts_mark_sp)
     ax[j].set_ylim(*ylims[i])
     ax[j].set_ylabel(var_labs[i], **opts_labs)
     ax[j].minorticks_on()
@@ -273,7 +276,7 @@ idx = (tab['batch_number'] == btp)
 fig, ax = plt.subplots(nrows = 4, ncols = 2, figsize = large_fs, sharex = True)
 for i in range(8):
     j = np.unravel_index(i, (4, 2), order = 'F')
-    ax[j].plot(tab.loc[idx, 'Time'], tab.loc[idx, vtp[i]], 'o', label = 'Data', markerfacecolor = colours[cv[i]], **opts_mark_sp)
+    ax[j].plot(tab.loc[idx, 'Time'], tab.loc[idx, vtp[i]], 'o', label = 'Data', markerfacecolor = colors[cv[i]], **opts_mark_sp)
     ax[j].set_ylim(*ylims[i])
     ax[j].set_ylabel(var_labs[i], **opts_labs)
     ax[j].minorticks_on()
@@ -295,7 +298,7 @@ idx = (tab['batch_number'] == btp)
 fig, ax = plt.subplots(nrows = 4, ncols = 2, figsize = large_fs, sharex = True)
 for i in range(8):
     j = np.unravel_index(i, (4, 2), order = 'F')
-    ax[j].plot(tab.loc[idx, 'Time'], tab.loc[idx, vtp[i]], 'o', label = 'Data', markerfacecolor = colours[cv[i]], **opts_mark_sp)
+    ax[j].plot(tab.loc[idx, 'Time'], tab.loc[idx, vtp[i]], 'o', label = 'Data', markerfacecolor = colors[cv[i]], **opts_mark_sp)
     ax[j].set_ylim(*ylims[i])
     ax[j].set_ylabel(var_labs[i], **opts_labs)
     ax[j].minorticks_on()
@@ -337,10 +340,10 @@ Ns = [N_i, N_h, N_o]
 # Total number of parameters
 Np = np.dot((1 + np.array(Ns[0:-1])), np.array(Ns[1:]))
 
-# Random numebr generator
+# Random number generator
 rseed = np.random.RandomState(seed = 20241203)
 rng = np.random.default_rng(20241203)
-# Intialize parameters
+# Initialize parameters
 p_0 = rng.standard_normal(Np)
 
 # Optimization options
@@ -353,7 +356,8 @@ opt = {
 mod_perf = {
     'model' : [],
     'training' : [],
-    'testing' : []
+    'testing' : [],
+    'extrapolation' : []
 }
 
 #%% Data preparation
@@ -560,7 +564,7 @@ OPT = minimize(
     options = opt
 )
 
-# Recover the parameteters
+# Recover the parameters
 p = OPT.x
 # Reconstruct parameter matrices
 W, b = ANN_params_to_matrices(p, L, Ns)
@@ -572,16 +576,20 @@ y_pred_ANN_test = preprocessor_y.inverse_transform(ANN(preprocessor_X.transform(
 # Performance metric
 PM_ANN = MSE(y.flatten(), y_pred_ANN.flatten())
 PM_ANN_test = MSE(y_test.flatten(), y_pred_ANN_test.flatten())
+PM_ANN_extr = MSE(y_test[extr_idx, :].flatten(), y_pred_ANN_test[extr_idx, :].flatten())
 
 # Save model performance
 mod_perf['model'].append('ANN')
 mod_perf['training'].append(PM_ANN)
 mod_perf['testing'].append(PM_ANN_test)
+mod_perf['extrapolation'].append(PM_ANN_extr)
+
 
 # Display results
 print('%--------> ANN <--------%')
 print('Performance metric (train):', PM_ANN, end = '\n')
-print('Performance metric  (test):', PM_ANN_test, end = '\n\n')
+print('Performance metric  (test):', PM_ANN_test, end = '\n')
+print('Performance metric  (extr):', PM_ANN_extr, end = '\n\n')
 
 # Apply ANN to all data
 pred['a_ANN'] = preprocessor_y.inverse_transform(ANN(X_all.T, W, b, f).T)
@@ -599,8 +607,8 @@ for k, i in enumerate([0, 2]):
         j = np.unravel_index(k, (nr, nc))
     else:
         j = k
-    ax[j].plot(pred.loc[idx, 'Time'], pred.loc[idx, 'a'], 'o', label = 'Data', markerfacecolor = colours[0], **opts_mark)
-    ax[j].plot(pred.loc[idx, 'Time'], pred.loc[idx, 'a_ANN'], '-', label = 'ANN', color = colours[3], **opts_line_a)
+    ax[j].plot(pred.loc[idx, 'Time'], pred.loc[idx, 'a'], 'o', label = 'Data', markerfacecolor = colors[0], **opts_mark)
+    ax[j].plot(pred.loc[idx, 'Time'], pred.loc[idx, 'a_ANN'], '-', label = 'ANN', color = colors[3], **opts_line_a)
     ax[j].text(0.03, 0.06, titles[i], transform = ax[j].transAxes, horizontalalignment = 'left', verticalalignment = 'bottom', **opts_text)
     ax[j].minorticks_on()
     ax[j].tick_params(axis = 'both', which = 'both', **opts_ticks)
@@ -643,7 +651,7 @@ OPT_PGNN = minimize(
     options = opt
 )
 
-# Recover the parameteters
+# Recover the parameters
 p = OPT_PGNN.x
 # Reconstruct parameter matrices
 W, b = ANN_params_to_matrices(p, L, Ns)
@@ -655,16 +663,19 @@ y_pred_PGNN_test = preprocessor_y.inverse_transform(ANN(preprocessor_X.transform
 # Performance metric
 PM_PGNN = MSE(y.flatten(), y_pred_PGNN.flatten())
 PM_PGNN_test = MSE(y_test.flatten(), y_pred_PGNN_test.flatten())
+PM_PGNN_extr = MSE(y_test[extr_idx, :].flatten(), y_pred_PGNN_test[extr_idx, :].flatten())
 
 # Save model performance
 mod_perf['model'].append('PGNN_a')
 mod_perf['training'].append(PM_PGNN)
 mod_perf['testing'].append(PM_PGNN_test)
+mod_perf['extrapolation'].append(PM_PGNN_extr)
 
 # Display results
-print('%--------> PGNN_a (bound contraints) <--------%')
+print('%--------> PGNN_a (bound constraints) <--------%')
 print('Performance metric (train):', PM_PGNN, end = '\n')
-print('Performance metric  (test):', PM_PGNN_test, end = '\n\n')
+print('Performance metric  (test):', PM_PGNN_test, end = '\n')
+print('Performance metric  (extr):', PM_PGNN_extr, end = '\n\n')
 
 # Apply ANN to all data
 pred['PGNN_a'] = preprocessor_y.inverse_transform(ANN(X_all.T, W, b, f).T)
@@ -679,9 +690,9 @@ for i in range(NB):
         j = np.unravel_index(i, (nr, nc))
     else:
         j = i
-    ax[j].plot(pred.loc[idx, 'Time'], pred.loc[idx, 'a'], 'o', label = 'Data', markerfacecolor = colours[0], **opts_mark)
-    ax[j].plot(pred.loc[idx, 'Time'], pred.loc[idx, 'a_ANN'], '-', label = 'ANN', color = colours[3], **opts_line_a)
-    ax[j].plot(pred.loc[idx, 'Time'], pred.loc[idx, 'PGNN_a'], '-', label = 'PGNN_a', color = colours[4], **opts_line)
+    ax[j].plot(pred.loc[idx, 'Time'], pred.loc[idx, 'a'], 'o', label = 'Data', markerfacecolor = colors[0], **opts_mark)
+    ax[j].plot(pred.loc[idx, 'Time'], pred.loc[idx, 'a_ANN'], '-', label = 'ANN', color = colors[3], **opts_line_a)
+    ax[j].plot(pred.loc[idx, 'Time'], pred.loc[idx, 'PGNN_a'], '-', label = 'PGNN_a', color = colors[4], **opts_line)
     ax[j].text(0.03, 0.06, titles[i], transform = ax[j].transAxes, horizontalalignment = 'left', verticalalignment = 'bottom', **opts_text)
     ax[j].minorticks_on()
     ax[j].tick_params(axis = 'both', which = 'both', **opts_ticks)
@@ -707,7 +718,7 @@ plt.tight_layout()
 alpha = np.array([
     0.1,    # Lower bound
     0.1,    # Upper bound
-    0.0175, # Monotonicity constraint
+    0.017,  # Monotonicity constraint
     0.00,   # Reference activity from material balance of A
     0.00,   # Reference activity from material balance of B
     0.00,   # Reference activity from material balance of C
@@ -724,7 +735,7 @@ OPT_PGNN = minimize(
     options = opt
 )
 
-# Recover the parameteters
+# Recover the parameters
 p = OPT_PGNN.x
 # Reconstruct parameter matrices
 W, b = ANN_params_to_matrices(p, L, Ns)
@@ -736,16 +747,19 @@ y_pred_PGNN_test = preprocessor_y.inverse_transform(ANN(preprocessor_X.transform
 # Performance metric
 PM_PGNN = MSE(y.flatten(), y_pred_PGNN.flatten())
 PM_PGNN_test = MSE(y_test.flatten(), y_pred_PGNN_test.flatten())
+PM_PGNN_extr = MSE(y_test[extr_idx.flatten(), :].flatten(), y_pred_PGNN_test[extr_idx.flatten(), :].flatten())
 
 # Save model performance
 mod_perf['model'].append('PGNN_b')
 mod_perf['training'].append(PM_PGNN)
 mod_perf['testing'].append(PM_PGNN_test)
+mod_perf['extrapolation'].append(PM_PGNN_extr)
 
 # Display results
-print('%--------> PGNN_b (bound and slope contraints) <--------%')
+print('%--------> PGNN_b (bound and slope constraints) <--------%')
 print('Performance metric (train):', PM_PGNN, end = '\n')
-print('Performance metric  (test):', PM_PGNN_test, end = '\n\n')
+print('Performance metric  (test):', PM_PGNN_test, end = '\n')
+print('Performance metric  (extr):', PM_PGNN_extr, end = '\n\n')
 
 # Apply ANN to all data
 pred['PGNN_b'] = preprocessor_y.inverse_transform(ANN(X_all.T, W, b, f).T)
@@ -760,9 +774,9 @@ for i in range(NB):
         j = np.unravel_index(i, (nr, nc))
     else:
         j = i
-    ax[j].plot(pred.loc[idx, 'Time'], pred.loc[idx, 'a'], 'o', label = 'Data', markerfacecolor = colours[0], **opts_mark)
-    ax[j].plot(pred.loc[idx, 'Time'], pred.loc[idx, 'a_ANN'], '-', label = 'ANN', color = colours[3], **opts_line_a)
-    ax[j].plot(pred.loc[idx, 'Time'], pred.loc[idx, 'PGNN_b'], '-', label = 'PGNN_b', color = colours[4], **opts_line)
+    ax[j].plot(pred.loc[idx, 'Time'], pred.loc[idx, 'a'], 'o', label = 'Data', markerfacecolor = colors[0], **opts_mark)
+    ax[j].plot(pred.loc[idx, 'Time'], pred.loc[idx, 'a_ANN'], '-', label = 'ANN', color = colors[3], **opts_line_a)
+    ax[j].plot(pred.loc[idx, 'Time'], pred.loc[idx, 'PGNN_b'], '-', label = 'PGNN_b', color = colors[4], **opts_line)
     ax[j].text(0.03, 0.06, titles[i], transform = ax[j].transAxes, horizontalalignment = 'left', verticalalignment = 'bottom', **opts_text)
     ax[j].minorticks_on()
     ax[j].tick_params(axis = 'both', which = 'both', **opts_ticks)
@@ -806,7 +820,7 @@ OPT_PGNN = minimize(
     options = opt
 )
 
-# Recover the parameteters
+# Recover the parameters
 p = OPT_PGNN.x
 # Reconstruct parameter matrices
 W, b = ANN_params_to_matrices(p, L, Ns)
@@ -818,16 +832,19 @@ y_pred_PGNN_test = preprocessor_y.inverse_transform(ANN(preprocessor_X.transform
 # Performance metric
 PM_PGNN = MSE(y.flatten(), y_pred_PGNN.flatten())
 PM_PGNN_test = MSE(y_test.flatten(), y_pred_PGNN_test.flatten())
+PM_PGNN_extr = MSE(y_test[extr_idx.flatten(), :].flatten(), y_pred_PGNN_test[extr_idx.flatten(), :].flatten())
 
 # Save model performance
 mod_perf['model'].append('PGNN_c')
 mod_perf['training'].append(PM_PGNN)
 mod_perf['testing'].append(PM_PGNN_test)
+mod_perf['extrapolation'].append(PM_PGNN_extr)
 
 # Display results
-print('%--------> PGNN_c (reference model contraints) <--------%')
+print('%--------> PGNN_c (reference model constraints) <--------%')
 print('Performance metric (train):', PM_PGNN, end = '\n')
-print('Performance metric  (test):', PM_PGNN_test, end = '\n\n')
+print('Performance metric  (test):', PM_PGNN_test, end = '\n')
+print('Performance metric  (extr):', PM_PGNN_extr, end = '\n\n')
 
 # Apply ANN to all data
 pred['PGNN_c'] = preprocessor_y.inverse_transform(ANN(X_all.T, W, b, f).T)
@@ -842,9 +859,9 @@ for i in range(NB):
         j = np.unravel_index(i, (nr, nc))
     else:
         j = i
-    ax[j].plot(pred.loc[idx, 'Time'], pred.loc[idx, 'a'], 'o', label = 'Data', markerfacecolor = colours[0], **opts_mark)
-    ax[j].plot(pred.loc[idx, 'Time'], pred.loc[idx, 'a_ANN'], '-', label = 'ANN', color = colours[3], **opts_line_a)
-    ax[j].plot(pred.loc[idx, 'Time'], pred.loc[idx, 'PGNN_c'], '-', label = 'PGNN_c', color = colours[4], **opts_line)
+    ax[j].plot(pred.loc[idx, 'Time'], pred.loc[idx, 'a'], 'o', label = 'Data', markerfacecolor = colors[0], **opts_mark)
+    ax[j].plot(pred.loc[idx, 'Time'], pred.loc[idx, 'a_ANN'], '-', label = 'ANN', color = colors[3], **opts_line_a)
+    ax[j].plot(pred.loc[idx, 'Time'], pred.loc[idx, 'PGNN_c'], '-', label = 'PGNN_c', color = colors[4], **opts_line)
     ax[j].text(0.03, 0.06, titles[i], transform = ax[j].transAxes, horizontalalignment = 'left', verticalalignment = 'bottom', **opts_text)
     ax[j].minorticks_on()
     ax[j].tick_params(axis = 'both', which = 'both', **opts_ticks)
@@ -886,7 +903,7 @@ OPT_PGNN = minimize(
     options = opt
 )
 
-# Recover the parameteters
+# Recover the parameters
 p = OPT_PGNN.x
 # Reconstruct parameter matrices
 W, b = ANN_params_to_matrices(p, L, Ns)
@@ -898,16 +915,19 @@ y_pred_PGNN_test = preprocessor_y.inverse_transform(ANN(preprocessor_X.transform
 # Performance metric
 PM_PGNN = MSE(y.flatten(), y_pred_PGNN.flatten())
 PM_PGNN_test = MSE(y_test.flatten(), y_pred_PGNN_test.flatten())
+PM_PGNN_extr = MSE(y_test[extr_idx.flatten(), :].flatten(), y_pred_PGNN_test[extr_idx.flatten(), :].flatten())
 
 # Save model performance
 mod_perf['model'].append('PGNN_d')
 mod_perf['training'].append(PM_PGNN)
 mod_perf['testing'].append(PM_PGNN_test)
+mod_perf['extrapolation'].append(PM_PGNN_extr)
 
 # Display results
-print('%--------> PGNN_d (alternative reference model contraints) <--------%')
+print('%--------> PGNN_d (alternative reference model constraints) <--------%')
 print('Performance metric (train):', PM_PGNN, end = '\n')
-print('Performance metric  (test):', PM_PGNN_test, end = '\n\n')
+print('Performance metric  (test):', PM_PGNN_test, end = '\n')
+print('Performance metric  (extr):', PM_PGNN_extr, end = '\n\n')
 
 # Apply ANN to all data
 pred['PGNN_d'] = preprocessor_y.inverse_transform(ANN(X_all.T, W, b, f).T)
@@ -922,9 +942,9 @@ for i in range(NB):
         j = np.unravel_index(i, (nr, nc))
     else:
         j = i
-    ax[j].plot(pred.loc[idx, 'Time'], pred.loc[idx, 'a'], 'o', label = 'Data', markerfacecolor = colours[0], **opts_mark)
-    ax[j].plot(pred.loc[idx, 'Time'], pred.loc[idx, 'a_ANN'], '-', label = 'ANN', color = colours[3], **opts_line_a)
-    ax[j].plot(pred.loc[idx, 'Time'], pred.loc[idx, 'PGNN_d'], '-', label = 'PGNN_d', color = colours[4], **opts_line)
+    ax[j].plot(pred.loc[idx, 'Time'], pred.loc[idx, 'a'], 'o', label = 'Data', markerfacecolor = colors[0], **opts_mark)
+    ax[j].plot(pred.loc[idx, 'Time'], pred.loc[idx, 'a_ANN'], '-', label = 'ANN', color = colors[3], **opts_line_a)
+    ax[j].plot(pred.loc[idx, 'Time'], pred.loc[idx, 'PGNN_d'], '-', label = 'PGNN_d', color = colors[4], **opts_line)
     ax[j].text(0.03, 0.06, titles[i], transform = ax[j].transAxes, horizontalalignment = 'left', verticalalignment = 'bottom', **opts_text)
     ax[j].minorticks_on()
     ax[j].tick_params(axis = 'both', which = 'both', **opts_ticks)
@@ -966,7 +986,7 @@ OPT_PGNN = minimize(
     options = opt
 )
 
-# Recover the parameteters
+# Recover the parameters
 p = OPT_PGNN.x
 # Reconstruct parameter matrices
 W, b = ANN_params_to_matrices(p, L, Ns)
@@ -978,16 +998,19 @@ y_pred_PGNN_test = preprocessor_y.inverse_transform(ANN(preprocessor_X.transform
 # Performance metric
 PM_PGNN = MSE(y.flatten(), y_pred_PGNN.flatten())
 PM_PGNN_test = MSE(y_test.flatten(), y_pred_PGNN_test.flatten())
+PM_PGNN_extr = MSE(y_test[extr_idx.flatten(), :].flatten(), y_pred_PGNN_test[extr_idx.flatten(), :].flatten())
 
 # Save model performance
 mod_perf['model'].append('PGNN_e')
 mod_perf['training'].append(PM_PGNN)
 mod_perf['testing'].append(PM_PGNN_test)
+mod_perf['extrapolation'].append(PM_PGNN_extr)
 
 # Display results
-print('%--------> PGNN_e (all reference model contraints) <--------%')
+print('%--------> PGNN_e (all reference model constraints) <--------%')
 print('Performance metric (train):', PM_PGNN, end = '\n')
-print('Performance metric  (test):', PM_PGNN_test, end = '\n\n')
+print('Performance metric  (test):', PM_PGNN_test, end = '\n')
+print('Performance metric  (extr):', PM_PGNN_extr, end = '\n\n')
 
 # Apply ANN to all data
 pred['PGNN_e'] = preprocessor_y.inverse_transform(ANN(X_all.T, W, b, f).T)
@@ -1002,9 +1025,9 @@ for i in range(NB):
         j = np.unravel_index(i, (nr, nc))
     else:
         j = i
-    ax[j].plot(pred.loc[idx, 'Time'], pred.loc[idx, 'a'], 'o', label = 'Data', markerfacecolor = colours[0], **opts_mark)
-    ax[j].plot(pred.loc[idx, 'Time'], pred.loc[idx, 'a_ANN'], '-', label = 'ANN', color = colours[3], **opts_line_a)
-    ax[j].plot(pred.loc[idx, 'Time'], pred.loc[idx, 'PGNN_e'], '-', label = 'PGNN_e', color = colours[4], **opts_line)
+    ax[j].plot(pred.loc[idx, 'Time'], pred.loc[idx, 'a'], 'o', label = 'Data', markerfacecolor = colors[0], **opts_mark)
+    ax[j].plot(pred.loc[idx, 'Time'], pred.loc[idx, 'a_ANN'], '-', label = 'ANN', color = colors[3], **opts_line_a)
+    ax[j].plot(pred.loc[idx, 'Time'], pred.loc[idx, 'PGNN_e'], '-', label = 'PGNN_e', color = colors[4], **opts_line)
     ax[j].text(0.03, 0.06, titles[i], transform = ax[j].transAxes, horizontalalignment = 'left', verticalalignment = 'bottom', **opts_text)
     ax[j].minorticks_on()
     ax[j].tick_params(axis = 'both', which = 'both', **opts_ticks)
@@ -1047,7 +1070,7 @@ OPT_PGNN = minimize(
     options = opt
 )
 
-# Recover the parameteters
+# Recover the parameters
 p = OPT_PGNN.x
 # Reconstruct parameter matrices
 W, b = ANN_params_to_matrices(p, L, Ns)
@@ -1059,16 +1082,19 @@ y_pred_PGNN_test = preprocessor_y.inverse_transform(ANN(preprocessor_X.transform
 # Performance metric
 PM_PGNN = MSE(y.flatten(), y_pred_PGNN.flatten())
 PM_PGNN_test = MSE(y_test.flatten(), y_pred_PGNN_test.flatten())
+PM_PGNN_extr = MSE(y_test[extr_idx.flatten(), :].flatten(), y_pred_PGNN_test[extr_idx.flatten(), :].flatten())
 
 # Save model performance
 mod_perf['model'].append('PGNN_f')
 mod_perf['training'].append(PM_PGNN)
 mod_perf['testing'].append(PM_PGNN_test)
+mod_perf['extrapolation'].append(PM_PGNN_extr)
 
 # Display results
-print('%--------> PGNN_f (incorrect reference model contraints) <--------%')
+print('%--------> PGNN_f (incorrect reference model constraints) <--------%')
 print('Performance metric (train):', PM_PGNN, end = '\n')
-print('Performance metric  (test):', PM_PGNN_test, end = '\n\n')
+print('Performance metric  (test):', PM_PGNN_test, end = '\n')
+print('Performance metric  (extr):', PM_PGNN_extr, end = '\n\n')
 
 # Apply ANN to all data
 pred['PGNN_f'] = preprocessor_y.inverse_transform(ANN(X_all.T, W, b, f).T)
@@ -1083,9 +1109,9 @@ for i in range(NB):
         j = np.unravel_index(i, (nr, nc))
     else:
         j = i
-    ax[j].plot(pred.loc[idx, 'Time'], pred.loc[idx, 'a'], 'o', label = 'Data', markerfacecolor = colours[0], **opts_mark)
-    ax[j].plot(pred.loc[idx, 'Time'], pred.loc[idx, 'a_ANN'], '-', label = 'ANN', color = colours[3], **opts_line_a)
-    ax[j].plot(pred.loc[idx, 'Time'], pred.loc[idx, 'PGNN_f'], '-', label = 'PGNN_f', color = colours[4], **opts_line)
+    ax[j].plot(pred.loc[idx, 'Time'], pred.loc[idx, 'a'], 'o', label = 'Data', markerfacecolor = colors[0], **opts_mark)
+    ax[j].plot(pred.loc[idx, 'Time'], pred.loc[idx, 'a_ANN'], '-', label = 'ANN', color = colors[3], **opts_line_a)
+    ax[j].plot(pred.loc[idx, 'Time'], pred.loc[idx, 'PGNN_f'], '-', label = 'PGNN_f', color = colors[4], **opts_line)
     ax[j].text(0.03, 0.06, titles[i], transform = ax[j].transAxes, horizontalalignment = 'left', verticalalignment = 'bottom', **opts_text)
     ax[j].minorticks_on()
     ax[j].tick_params(axis = 'both', which = 'both', **opts_ticks)
@@ -1110,7 +1136,7 @@ plt.tight_layout()
 # Make dataframe
 mod_perf_tab = pd.DataFrame(mod_perf)
 # Convert MSE intro RMSE
-mod_perf_tab.loc[:, ['training', 'testing']] = np.sqrt(mod_perf_tab.loc[:, ['training', 'testing']])
+mod_perf_tab.loc[:, ['training', 'testing', 'extrapolation']] = np.sqrt(mod_perf_tab.loc[:, ['training', 'testing', 'extrapolation']])
 # Display dataframe
 print('%--------> Summary of performance (RMSE of models) <--------%')
 print(mod_perf_tab)

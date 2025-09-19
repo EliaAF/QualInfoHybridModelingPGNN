@@ -25,11 +25,10 @@ this program. If not, see https://www.gnu.org/licenses/gpl-3.0.html.
 
 To attribute credit to the author of the software, please refer to the
 companion Journal Paper:
-    E. Arnese-Feffin, N. Sagar, L. A. Briceno-Mena, B. Braun, I. Castillo\ap{3}, L. Bui, J. Xu, L. H. Chiang, and R. D. Braatz (2025):
-        <TITLE>.
-        <JOURNAL>, 00, 000-000.
+    E. Arnese-Feffin, N. Sagar, L.A. Briceno-Mena, B. Braun, I. Castillo, C. Rizzo, L. Bui, J. Xu, L.H. Chiang, and R.D. Braatz (2025):
+        The Incorporation of Qualitative Knowledge in Hybrid Modeling.
+        Computers and Chemical Engineering, 00, 000000.
         DOI: <DOI>.
-
 """
 
 #%% Load packages
