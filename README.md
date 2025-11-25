@@ -49,7 +49,7 @@ These instructions were tested on January 29, 2024 on a Windows 11 workstation.
 
 To attribute credit to the author of the software, please refer to the companion Journal Paper.
 
-E. Arnese-Feffin, N. Sagar, L.A. Briceno-Mena, B. Braun, I. Castillo, C. Rizzo, L. Bui, J. Xu, L.H. Chiang, and R.D. Braatz (2025): The Incorporation of Qualitative Knowledge in Hybrid Modeling. *Submitted to: Computers and Chemical Engineering*.<!--, **00**, 000000. DOI: [text_to_display](link)-->
+E. Arnese-Feffin, N. Sagar, L.A. Briceno-Mena, B. Braun, I. Castillo, C. Rizzo, L. Bui, J. Xu, L.H. Chiang, and R.D. Braatz (2026): The Incorporation of Qualitative Knowledge in Hybrid Modeling. *Computers and Chemical Engineering*, **205**, 109484. DOI: [https://doi.org/10.1016/j.compchemeng.2025.109484](https://doi.org/10.1016/j.compchemeng.2025.109484).
 
 ## License agreement
 
